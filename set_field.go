@@ -2,8 +2,6 @@ package marshalddb
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 	"reflect"
 	"strconv"
 )
@@ -29,13 +27,13 @@ func setFieldWithKind(kind reflect.Kind, fromField reflect.Value, toField *refle
 		err = setFloat(fromField, toField)
 
 	case reflect.Slice:
-		err = errors.New("ConvertFromAttributes: TODO convert from slice")
+		err = ErrConversionNotSupported
 
 	case reflect.Array, reflect.Interface, reflect.Map, reflect.Ptr, reflect.Struct:
 		err = setJSON(fromField, toField)
 
 	default:
-		err = fmt.Errorf("ConvertFromAttributes: Conversion from=string to=%s", toField.Kind().String())
+		err = ErrConversionNotSupported
 
 	}
 
@@ -47,7 +45,7 @@ func setBool(fieldEl reflect.Value, toField *reflect.Value) error {
 	fromVal := fieldEl.String()
 	n, err := strconv.ParseInt(fromVal, 10, 64)
 	if err != nil {
-		return fmt.Errorf("ConvertFromAttributes: Failed to convert string=%s to int", fromVal)
+		return ErrInvalidStringForNumber
 	}
 	toField.SetBool(n != 0)
 	return nil
@@ -58,10 +56,10 @@ func setInt(fieldEl reflect.Value, toField *reflect.Value) error {
 	fromVal := fieldEl.String()
 	n, err := strconv.ParseInt(fromVal, 10, 64)
 	if err != nil {
-		return fmt.Errorf("ConvertFromAttributes: Failed to convert string=%s to int", fromVal)
+		return ErrInvalidStringForNumber
 	}
 	if toField.OverflowInt(n) {
-		return fmt.Errorf("ConvertFromAttributes: Int conversion from value=%d will cause overflow", n)
+		return ErrNumericOverflow
 	}
 	toField.SetInt(n)
 	return nil
@@ -97,15 +95,15 @@ func setUint(fieldEl reflect.Value, toField *reflect.Value) error {
 		n = uint64(fieldEl.Float())
 
 	default:
-		err = errors.New("")
+		err = ErrConversionNotSupported
 	}
 
 	if err != nil {
-		return fmt.Errorf("ConvertFromAttributes: Failed to convert from=%v to uint", fieldEl.Kind())
+		return ErrConversionNotSupported
 	}
 
 	if toField.OverflowUint(n) {
-		return fmt.Errorf("ConvertFromAttributes: Uint conversion from value=%d will cause overflow", n)
+		return ErrNumericOverflow
 	}
 	toField.SetUint(n)
 	return nil
@@ -116,10 +114,10 @@ func setFloat(fieldEl reflect.Value, toField *reflect.Value) error {
 	fromVal := fieldEl.String()
 	n, err := strconv.ParseFloat(fromVal, toField.Type().Bits())
 	if err != nil {
-		return fmt.Errorf("ConvertFromAttributes: Failed to convert string=%s to float", fromVal)
+		return ErrInvalidStringForNumber
 	}
 	if toField.OverflowFloat(n) {
-		return fmt.Errorf("ConvertFromAttributes: Float conversion from value=%d will cause overflow", n)
+		return ErrNumericOverflow
 	}
 	toField.SetFloat(n)
 	return nil
@@ -132,7 +130,7 @@ func setJSON(fieldEl reflect.Value, toField *reflect.Value) error {
 	newTarget := reflect.New(toField.Type())
 	// unmarshal our AttributeValue's value into our new target
 	if err := json.Unmarshal([]byte(fromVal), newTarget.Interface()); err != nil {
-		return fmt.Errorf("ConvertFromAttributes: Failed to unmarshal field=%s, into=%v", fromVal, toField.Type())
+		return ErrInvalidJSON
 	}
 	// set our target field with the unmarshaled result
 	toField.Set(newTarget.Elem())

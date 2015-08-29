@@ -1,8 +1,6 @@
 package marshalddb
 
 import (
-	"errors"
-	"fmt"
 	"math"
 	"reflect"
 	"strconv"
@@ -16,7 +14,7 @@ func ConvertFromAttributes(item map[string]*dynamodb.AttributeValue, v interface
 
 	to := reflect.ValueOf(v)
 	if to.Kind() != reflect.Ptr || to.IsNil() {
-		return errors.New("ConvertFromAttributes: v must be a non nil pointer")
+		return ErrNilTarget
 	}
 	toEl := to.Elem()
 
@@ -145,7 +143,7 @@ func ConvertToAttributes(v interface{}) (map[string]*dynamodb.AttributeValue, er
 			case reflect.Float32, reflect.Float64:
 				ff := f.Float()
 				if math.IsInf(ff, 0) || math.IsNaN(ff) {
-					return to, fmt.Errorf("ConvertToAttributes: Invalid float=%v", ff)
+					return to, ErrInvalidFloat
 				}
 				to[fieldName] = &dynamodb.AttributeValue{
 					N: aws.String(strconv.FormatFloat(ff, 'g', -1, f.Type().Bits())),
@@ -181,7 +179,7 @@ func ConvertToAttributes(v interface{}) (map[string]*dynamodb.AttributeValue, er
 					to[fieldName] = createBS(f)
 
 				default:
-					return to, fmt.Errorf("ConvertToAttributes: Conversion from=%v not yet implemented", fk)
+					return to, ErrConversionNotSupported
 
 				}
 
@@ -194,12 +192,12 @@ func ConvertToAttributes(v interface{}) (map[string]*dynamodb.AttributeValue, er
 				to[fieldName] = fi
 
 			default:
-				return to, fmt.Errorf("ConvertToAttributes: Conversion from=%v not yet implemented", fk)
+				return to, ErrConversionNotSupported
 			}
 		}
 
 	default:
-		return to, fmt.Errorf("ConvertToAttributes: Conversion from=%v not yet implemented", ev.Kind())
+		return to, ErrConversionNotSupported
 	}
 
 	return to, nil
@@ -247,7 +245,7 @@ func setFieldVal(attributeValueName string, fieldEl reflect.Value, toField *refl
 			}
 
 		default:
-			err = fmt.Errorf("ConvertFromAttributes: Conversion from=bool to=%s", toField.Kind().String())
+			err = ErrInvalidConversion
 		}
 
 	case "B":
@@ -262,7 +260,7 @@ func setFieldVal(attributeValueName string, fieldEl reflect.Value, toField *refl
 			toField.SetBytes(fromVal)
 
 		default:
-			err = fmt.Errorf("ConvertFromAttributes: Conversion from=[]byte to=%s", toField.Kind().String())
+			err = ErrInvalidConversion
 
 		}
 
@@ -285,7 +283,9 @@ func setFieldVal(attributeValueName string, fieldEl reflect.Value, toField *refl
 			for i := 0; i < fromLen; i++ {
 
 				toFieldAtIndex := arr.Index(i)
-				setInt(fieldEl.Index(i).Elem(), &toFieldAtIndex)
+				if err := setInt(fieldEl.Index(i).Elem(), &toFieldAtIndex); err != nil {
+					return err
+				}
 			}
 			toField.Set(arr)
 
@@ -294,7 +294,9 @@ func setFieldVal(attributeValueName string, fieldEl reflect.Value, toField *refl
 			for i := 0; i < fromLen; i++ {
 
 				toFieldAtIndex := arr.Index(i)
-				setUint(fieldEl.Index(i).Elem(), &toFieldAtIndex)
+				if err := setUint(fieldEl.Index(i).Elem(), &toFieldAtIndex); err != nil {
+					return err
+				}
 			}
 			toField.Set(arr)
 
@@ -303,12 +305,14 @@ func setFieldVal(attributeValueName string, fieldEl reflect.Value, toField *refl
 			for i := 0; i < fromLen; i++ {
 
 				toFieldAtIndex := arr.Index(i)
-				setFloat(fieldEl.Index(i).Elem(), &toFieldAtIndex)
+				if err := setFloat(fieldEl.Index(i).Elem(), &toFieldAtIndex); err != nil {
+					return err
+				}
 			}
 			toField.Set(arr)
 
 		default:
-			return fmt.Errorf("ConvertFromAttributes: Conversion from=SS,NS to=%s", toField.Kind().String())
+			return ErrInvalidConversion
 
 		}
 
@@ -332,7 +336,7 @@ func setFieldVal(attributeValueName string, fieldEl reflect.Value, toField *refl
 
 		// Only covering the case of [][]byte to [][]byte
 		if toField.Type().String() != "[][]uint8" {
-			return fmt.Errorf("ConvertFromAttributes: BS conversion from=[][]byte to=%s is not implemented", toField.Type().String())
+			return ErrConversionNotSupported
 		}
 
 		fromLen := fieldEl.Len()
@@ -358,10 +362,10 @@ func setFieldVal(attributeValueName string, fieldEl reflect.Value, toField *refl
 		toField.Set(arr)
 
 	case "M":
-		return errors.New("ConvertFromAttributes: Convert from M not implemented")
+		return ErrConversionNotSupported
 
 	default:
-		return fmt.Errorf("ConvertFromAttributes: Converter=%s not implemented", attributeValueName)
+		return ErrConversionNotSupported
 	}
 
 	return err

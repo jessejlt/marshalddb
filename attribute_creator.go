@@ -2,7 +2,6 @@ package marshalddb
 
 import (
 	"encoding/json"
-	"fmt"
 	"math"
 	"reflect"
 	"strconv"
@@ -52,7 +51,7 @@ func createNS(from reflect.Value) (*dynamodb.AttributeValue, error) {
 		case reflect.Float32, reflect.Float64:
 			ff := e.Float()
 			if math.IsInf(ff, 0) || math.IsNaN(ff) {
-				return nil, fmt.Errorf("ConvertToAttributes: Invalid float=%v", ff)
+				return nil, ErrInvalidFloat
 			}
 			dst[i] = aws.String(strconv.FormatFloat(ff, 'g', -1, e.Type().Bits()))
 
@@ -122,7 +121,7 @@ func createSJSON(from reflect.Value) (*dynamodb.AttributeValue, error) {
 
 	j, err := json.Marshal(from.Interface())
 	if err != nil {
-		return nil, fmt.Errorf("ConvertToAttributes: Failed to marshal kind=%v to JSON", from.Kind())
+		return nil, ErrInvalidJSON
 	}
 
 	return &dynamodb.AttributeValue{
