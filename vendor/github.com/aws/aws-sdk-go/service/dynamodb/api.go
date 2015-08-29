@@ -6,8 +6,8 @@ package dynamodb
 import (
 	"time"
 
-	"github.com/jessejlt/marshalddb/internal/github.com/aws/aws-sdk-go/aws/awsutil"
-	"github.com/jessejlt/marshalddb/internal/github.com/aws/aws-sdk-go/aws/request"
+	"github.com/aws/aws-sdk-go/aws/awsutil"
+	"github.com/aws/aws-sdk-go/aws/request"
 )
 
 const opBatchGetItem = "BatchGetItem"

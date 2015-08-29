@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/awslabs/aws-sdk-go/aws"
 )
 
 func TestExtractAttribute(t *testing.T) {
@@ -27,7 +27,7 @@ func TestExtractAttribute(t *testing.T) {
 		},
 		{
 			Attr: &dynamodb.AttributeValue{
-				BOOL: aws.Boolean(true),
+				BOOL: aws.Bool(true),
 			},
 			ExpectName: "BOOL",
 			ExpectKind: reflect.Bool,
@@ -73,7 +73,7 @@ func TestExtractAttribute(t *testing.T) {
 		},
 		{
 			Attr: &dynamodb.AttributeValue{
-				NULL: aws.Boolean(false),
+				NULL: aws.Bool(false),
 			},
 			ExpectName: "NULL",
 			ExpectKind: reflect.Bool,
@@ -137,7 +137,7 @@ func TestConvertFromAttributesPrimitives(t *testing.T) {
 			S: aws.String("StringString"),
 		},
 		"TBool": &dynamodb.AttributeValue{
-			BOOL: aws.Boolean(true),
+			BOOL: aws.Bool(true),
 		},
 		"TInt": &dynamodb.AttributeValue{
 			N: aws.String("-100"),
@@ -218,7 +218,7 @@ func TestConvertFromAttributesNestedStructs(t *testing.T) {
 			S: aws.String("StringString"),
 		},
 		"TBool": &dynamodb.AttributeValue{
-			BOOL: aws.Boolean(false),
+			BOOL: aws.Bool(false),
 		},
 		"TStruct": &dynamodb.AttributeValue{
 			S: aws.String(`{"TInt":-1234,"TFloat32":3.14}`),
@@ -278,7 +278,7 @@ func TestConvertToAttributesPrimitives(t *testing.T) {
 			S: aws.String("StringString"),
 		},
 		"TBool": &dynamodb.AttributeValue{
-			BOOL: aws.Boolean(true),
+			BOOL: aws.Bool(true),
 		},
 		"TInt": &dynamodb.AttributeValue{
 			N: aws.String("-100"),
@@ -365,7 +365,7 @@ func TestConvertToAttributesNestedStructs(t *testing.T) {
 			S: aws.String("StringString"),
 		},
 		"TBool": &dynamodb.AttributeValue{
-			BOOL: aws.Boolean(false),
+			BOOL: aws.Bool(false),
 		},
 		"TStruct": &dynamodb.AttributeValue{
 			S: aws.String(`{"TInt":-1234,"TFloat32":3.14}`),

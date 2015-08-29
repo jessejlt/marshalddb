@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"strconv"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/awslabs/aws-sdk-go/aws"
 )
 
 // ConvertFromAttributes maps a DB returned map[string]*dynamodb.AttributeValue into a specified struct.
@@ -151,7 +151,7 @@ func ConvertToAttributes(v interface{}) (map[string]*dynamodb.AttributeValue, er
 
 			case reflect.Bool:
 				to[fieldName] = &dynamodb.AttributeValue{
-					BOOL: aws.Boolean(f.Bool()),
+					BOOL: aws.Bool(f.Bool()),
 				}
 
 			case reflect.Slice, reflect.Array:

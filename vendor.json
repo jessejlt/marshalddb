@@ -1,6 +1,6 @@
 {
 	"comment": "",
-	"ignore": "",
+	"ignore": "test",
 	"package": [
 		{
 			"canonical": "github.com/aws/aws-sdk-go/aws",
@@ -87,16 +87,16 @@
 			"revisionTime": "2015-08-27T10:56:13-07:00"
 		},
 		{
-			"canonical": "github.com/aws/aws-sdk-go/internal/protocol/query",
+			"canonical": "github.com/aws/aws-sdk-go/internal/protocol/json/jsonutil",
 			"comment": "",
-			"local": "vendor/github.com/aws/aws-sdk-go/internal/protocol/query",
+			"local": "vendor/github.com/aws/aws-sdk-go/internal/protocol/json/jsonutil",
 			"revision": "3f857351d52db88888630dc590903ad33b9bb124",
 			"revisionTime": "2015-08-27T10:56:13-07:00"
 		},
 		{
-			"canonical": "github.com/aws/aws-sdk-go/internal/protocol/query/queryutil",
+			"canonical": "github.com/aws/aws-sdk-go/internal/protocol/jsonrpc",
 			"comment": "",
-			"local": "vendor/github.com/aws/aws-sdk-go/internal/protocol/query/queryutil",
+			"local": "vendor/github.com/aws/aws-sdk-go/internal/protocol/jsonrpc",
 			"revision": "3f857351d52db88888630dc590903ad33b9bb124",
 			"revisionTime": "2015-08-27T10:56:13-07:00"
 		},
@@ -108,20 +108,6 @@
 			"revisionTime": "2015-08-27T10:56:13-07:00"
 		},
 		{
-			"canonical": "github.com/aws/aws-sdk-go/internal/protocol/restxml",
-			"comment": "",
-			"local": "vendor/github.com/aws/aws-sdk-go/internal/protocol/restxml",
-			"revision": "3f857351d52db88888630dc590903ad33b9bb124",
-			"revisionTime": "2015-08-27T10:56:13-07:00"
-		},
-		{
-			"canonical": "github.com/aws/aws-sdk-go/internal/protocol/xml/xmlutil",
-			"comment": "",
-			"local": "vendor/github.com/aws/aws-sdk-go/internal/protocol/xml/xmlutil",
-			"revision": "3f857351d52db88888630dc590903ad33b9bb124",
-			"revisionTime": "2015-08-27T10:56:13-07:00"
-		},
-		{
 			"canonical": "github.com/aws/aws-sdk-go/internal/signer/v4",
 			"comment": "",
 			"local": "vendor/github.com/aws/aws-sdk-go/internal/signer/v4",
@@ -129,32 +115,11 @@
 			"revisionTime": "2015-08-27T10:56:13-07:00"
 		},
 		{
-			"canonical": "github.com/aws/aws-sdk-go/internal/test/unit",
+			"canonical": "github.com/aws/aws-sdk-go/service/dynamodb",
 			"comment": "",
-			"local": "vendor/github.com/aws/aws-sdk-go/internal/test/unit",
+			"local": "vendor/github.com/aws/aws-sdk-go/service/dynamodb",
 			"revision": "3f857351d52db88888630dc590903ad33b9bb124",
 			"revisionTime": "2015-08-27T10:56:13-07:00"
-		},
-		{
-			"canonical": "github.com/aws/aws-sdk-go/internal/util",
-			"comment": "",
-			"local": "vendor/github.com/aws/aws-sdk-go/internal/util",
-			"revision": "3f857351d52db88888630dc590903ad33b9bb124",
-			"revisionTime": "2015-08-27T10:56:13-07:00"
-		},
-		{
-			"canonical": "github.com/aws/aws-sdk-go/service/s3",
-			"comment": "",
-			"local": "vendor/github.com/aws/aws-sdk-go/service/s3",
-			"revision": "3f857351d52db88888630dc590903ad33b9bb124",
-			"revisionTime": "2015-08-27T10:56:13-07:00"
-		},
-		{
-			"canonical": "github.com/stretchr/testify/assert",
-			"comment": "",
-			"local": "vendor/github.com/stretchr/testify/assert",
-			"revision": "dab07ac62d4905d3e48d17dc549c684ac3b7c15a",
-			"revisionTime": "2015-05-12T13:42:33+01:00"
 		},
 		{
 			"canonical": "github.com/vaughan0/go-ini",
